@@ -31,32 +31,22 @@ function showContacts(){
   elContactsList.innerHTML = '';
   var elContactsFragment = document.createDocumentFragment();
 
-  for (var contact of contacts) {
-    if (elNewLi) {
-      elNewLi.classList.add('mb-3');
-    }
-    var elNewLi = document.createElement('li');
-    elNewLi.classList.add('list-group-item', 'p-3', 'shadow-sm', 'border-0');
+  var elContactsTemplate = document.querySelector('#contacts-template').content;
+  contacts.forEach(function (contact, index) {
+    var elContactItem = elContactsTemplate.cloneNode(true);
 
-    var elNewHeading = document.createElement('h3');
-    elNewHeading.classList.add('h5');
-    elNewHeading.textContent = contact.name;
-    elNewLi.appendChild(elNewHeading);
+    elContactItem.querySelector('.contact-title').textContent = contact.name;
+    elContactItem.querySelector('.contact-relationship ').textContent = contact.relationship;
+    elContactItem.querySelector('.contact-phone').textContent = contact.phone;
+    elContactItem.querySelector('.contact-phone').href = 'tel:' + (contact.phone);
+    elContactItem.querySelector('.contact-phone').dataset.index = index;
 
-    var elNewRelDiv = document.createElement('div');
-    elNewRelDiv.classList.add('mb-2');
-    elNewRelDiv.textContent = contact.relationship;
-    elNewLi.appendChild(elNewRelDiv);
+    elContactsFragment.appendChild(elContactItem); 
+  })
 
-    var elNewPhoneLink = document.createElement('a');
-    elNewPhoneLink.classList.add('btn', 'btn-outline-success', 'btn-sm');
-    elNewPhoneLink.href = "tel:" + contact.phone;
-    elNewPhoneLink.textContent = contact.phone;
-    elNewLi.appendChild(elNewPhoneLink);
-
-    elContactsFragment.appendChild(elNewLi);
-  }
   elContactsList.appendChild(elContactsFragment);
+
+
 }
 
 // Form bo'lsa
@@ -83,3 +73,16 @@ if (elNewContactForm) {
   });
 }
 // Form submitda amal bajariladi
+
+function deletecontact(index) {
+  contacts.splice(index, 1);
+}
+
+if (elContactsList) {
+  elContactsList.addEventListener('click', function(evt) {
+    if (evt.target.matches('.contact-btn')) {
+      deletecontact(Number(evt.target.dataset.index));
+      showContacts();
+    };
+  });
+};
